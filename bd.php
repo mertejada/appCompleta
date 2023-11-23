@@ -1,4 +1,5 @@
 <?php 
+//FUNCIONES DE CONEXION CON LA BASE DE DATOS 
 function leer_config($nombre, $esquema){
 	$config = new DOMDocument();
 	$config->load($nombre);
@@ -28,6 +29,8 @@ function conectarBD(){
         echo "Error: " . $e->getMessage();
     }
 }
+
+//FUNCIONES DE LOGIN:
 function comprobarUsuario($idUsuario, $clave){
     $bd = conectarBD();
     $sql = "SELECT * FROM usuarios WHERE IdUsuario = :idUsuario AND Clave = :clave";
@@ -61,3 +64,22 @@ function comprobarAdmin($idUsuario, $clave){
         return false;
     }
 }
+
+//FUNCIONES DE GESTION DE USUARIOS
+function crearUsuario($idUsuario, $nombre, $apellido, $clave, $codRol, $descRol, $correo, $fechaNac){
+    $bd = conectarBD();
+    $sql = "INSERT INTO usuarios VALUES (:idUsuario, :nombre, :apellido, :clave, :codRol, :descRol, :correo, :fechaNac)";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':idUsuario', $idUsuario);
+    $stmt->bindParam(':nombre', $nombre);
+    $stmt->bindParam(':apellido', $apellido);
+    $stmt->bindParam(':clave', $clave);
+    $stmt->bindParam(':codRol', $codRol);
+    $stmt->bindParam(':descRol', $descRol);
+    $stmt->bindParam(':correo', $correo);
+    $stmt->bindParam(':fechaNac', $fechaNac);
+    $stmt->execute();
+}
+
+

@@ -12,6 +12,9 @@
 
         if($iniciarComoAministrador){
             if(comprobarAdmin($idUsuario, $clave)){
+                session_start();
+                $_SESSION['usuario'] = $idUsuario;
+		        $_SESSION['carrito'] = [];
                 header('Location: indexAdmin.php');
             }elseif(comprobarUsuario($idUsuario, $clave)){
                 $err = "No tienes permisos de administrador";
@@ -20,6 +23,8 @@
             }
         }else{
             if(comprobarUsuario($idUsuario, $clave)){
+                session_start();
+                $_SESSION['usuario'] = $idUsuario;
                 header('Location: indexCliente.php');
             }else{
                 $err = "Tu nombre de usuario o contraseña no son correctos.";
