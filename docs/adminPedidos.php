@@ -13,7 +13,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h2> Gestión de categorías</h2>
+    <h2> Gestión de pedidos </h2>
     
 </body>
 </html>

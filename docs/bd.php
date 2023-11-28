@@ -66,8 +66,14 @@ function comprobarAdmin($idUsuario, $clave){
 }
 
 //FUNCIONES DE GESTION DE USUARIOS
-function crearUsuario($idUsuario, $nombre, $apellido, $clave, $codRol, $descRol, $correo, $fechaNac){
+function crearUsuario($idUsuario, $nombre, $apellido, $clave, $descRol, $correo, $fechaNac){
     $bd = conectarBD();
+    if($descRol == "Administrador"){
+        $codRol = 1;
+    }else{
+        $codRol = 0;
+    }
+
     $sql = "INSERT INTO usuarios VALUES (:idUsuario, :nombre, :apellido, :clave, :codRol, :descRol, :correo, :fechaNac)";
 
     $stmt = $bd->prepare($sql);
@@ -79,6 +85,63 @@ function crearUsuario($idUsuario, $nombre, $apellido, $clave, $codRol, $descRol,
     $stmt->bindParam(':descRol', $descRol);
     $stmt->bindParam(':correo', $correo);
     $stmt->bindParam(':fechaNac', $fechaNac);
+    $stmt->execute();
+}
+
+function eliminarUsuario($idUsuario){
+    $bd = conectarBD();
+    $sql = "DELETE FROM usuarios WHERE IdUsuario = :idUsuario";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':idUsuario', $idUsuario);
+    $stmt->execute();
+}
+
+
+//FUNCIONES DE GESTION DE PRODUCTOS
+//No hace falta el codProd porque es autoincremental en la BD
+function crearProducto($nomProd, $descripcionProd, $stock, $precioProd, $pesoProd, $codCat){
+    $bd = conectarBD();
+    $sql = "INSERT INTO productos (nomProd, descripcionProd, stock, precioProd, pesoProd, codCat) VALUES (:nomProd, :descripcionProd, :stock, :precioProd, :pesoProd, :codCat)";
+
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':nomProd', $nomProd);
+    $stmt->bindParam(':descripcionProd', $descripcionProd);
+    $stmt->bindParam(':stock', $stock);
+    $stmt->bindParam(':precioProd', $precioProd);
+    $stmt->bindParam(':pesoProd', $pesoProd);
+    $stmt->bindParam(':codCat', $codCat);
+    $stmt->execute();
+}
+
+function eliminarProducto($codProd){
+    $bd = conectarBD();
+    $sql = "DELETE FROM productos WHERE CodProd = :codProd";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codProd', $codProd);
+    $stmt->execute();
+}
+
+//FUNCIONES DE GESTION DE CATEGORIAS
+function crearCategoria($nomCat, $descripcionCat){
+    $bd = conectarBD();
+
+    $sql = "INSERT INTO categorias (nomCat, descripcionCat) VALUES (:nomCat, :descripcionCat)";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':nomCat', $nomCat);
+    $stmt->bindParam(':descripcionCat', $descripcionCat);
+    $stmt->execute();
+}
+
+function eliminarCategoria($codCat){
+    $bd = conectarBD();
+    $sql = "DELETE FROM categorias WHERE CodCat = :codCat";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codCat', $codCat);
     $stmt->execute();
 }
 
