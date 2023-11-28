@@ -62,6 +62,7 @@
         <select name="descRol" id="descRol">
             <option value="Administrador">Administrador</option>
             <option value="Cliente">Cliente</option>
+        </select>
         <br>
         <label for="correo">Correo:</label>
         <input type="text" name="correo" id="correo">

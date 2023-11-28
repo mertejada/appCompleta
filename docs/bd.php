@@ -147,4 +147,16 @@ function eliminarCategoria($codCat){
     $stmt->execute();
 }
 
+//FUNCIONES DE CLIENTE
+function mostrarCategorias(){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM categorias";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $res;
+}
+
 

@@ -51,16 +51,16 @@
         <input type="text" name="descripcionProd" id="descripcionProd">
         <br>
         <label for="stock">Stock:</label>
-        <input type="text" name="stock" id="stock">
+        <input type="number" name="stock" id="stock">
         <br>
         <label for="precioProd">Precio del producto:</label>
-        <input type="text" name="precioProd" id="precioProd">
+        <input type="number" name="precioProd" id="precioProd">
         <br>
         <label for="pesoProd">Peso del producto:</label>
-        <input type="text" name="pesoProd" id="pesoProd">
+        <input type="number" name="pesoProd" id="pesoProd">
         <br>
         <label for="codCat">Código de categoría:</label>
-        <input type="text" name="codCat" id="codCat">
+        <input type="number" name="codCat" id="codCat">
         <br>
         <input type="submit" value="Crear">
     </form>
