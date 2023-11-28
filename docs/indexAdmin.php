@@ -1,5 +1,6 @@
 
 <?php
+    require "adminCabecera.php";
     require_once "sesion.php";
     require_once "bd.php";
     comprobar_sesion();
