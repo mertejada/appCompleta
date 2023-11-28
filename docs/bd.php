@@ -65,6 +65,8 @@ function comprobarAdmin($idUsuario, $clave){
     }
 }
 
+
+//FUNCIONES DE GESTION DEL ADMINISTRADOR
 //FUNCIONES DE GESTION DE USUARIOS
 function crearUsuario($idUsuario, $nombre, $apellido, $clave, $descRol, $correo, $fechaNac){
     $bd = conectarBD();

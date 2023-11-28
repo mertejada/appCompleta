@@ -4,7 +4,6 @@
     comprobar_sesion();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $opcion = $_POST['opcion'];
 
         if(isset($_POST["opcion"])){
             $opcion = $_POST["opcion"];
@@ -25,7 +24,12 @@
                     eliminarUsuario($idUsuario);
                     break;
 
+
             }
+        }
+
+        if(isset($_POST['volver'])){
+            header('Location: indexAdmin.php');
         }
         
     }
@@ -71,7 +75,7 @@
         <br>
         <input type="submit" value="Crear usuario">
     </form>
-
+    <!--
     <h3> Modificación de usuarios</h3>
     <h4> Escriba el ID del usuario y los campos que desea modificar</h4>
     <form action="adminUsuarios.php" method="POST">
@@ -102,7 +106,7 @@
         <label for="fechaNac">Fecha de nacimiento:</label>
         <input type="date" name="fechaNac" id="fechaNac">
         <br>
-        <input type="submit" value="Modificar usuario">
+        <input type="submit" value="Modificar usuario"> -->
 
     <h3> Eliminación de usuarios</h3>
     <form action="adminUsuarios.php" method="POST">
@@ -111,7 +115,16 @@
         <input type="text" name="idUsuario" id="idUsuario">
         <br>
         <input type="submit" value="Eliminar usuario">
+        <br>
     </form>
+
+    <div>
+        <br>
+        <form action="indexAdmin.php" method="post">
+        <b><label for="opcion">Volver a la página de inicio</label></b>
+            <input type="submit" value="Volver">
+        </form>
+    </div>
 </body>
 </html>
 

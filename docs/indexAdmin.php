@@ -5,23 +5,25 @@
     comprobar_sesion();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $opcion = $_POST['opcion'];
-
-
-        switch($opcion){
-            case 1:
-                header('Location: adminUsuarios.php');
-                break;
-            case 2:
-                header('Location: adminProductos.php');
-                break;
-            case 3:
-                header('Location: adminCategorias.php');
-                break;
-            case 4:
-                header('Location: adminDescuentos.php');
-                break;
+        if(isset($_POST["opcion"])){
+            $opcion = $_POST["opcion"];
+            switch($opcion){
+                case 1:
+                    header('Location: adminUsuarios.php');
+                    break;
+                case 2:
+                    header('Location: adminProductos.php');
+                    break;
+                case 3:
+                    header('Location: adminCategorias.php');
+                    break;
+                case 4:
+                    header('Location: adminDescuentos.php');
+                    break;
+            }
         }
+
+        
 
         if(isset($_POST['cerrarSesion'])){
             session_destroy();

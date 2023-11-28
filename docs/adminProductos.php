@@ -4,8 +4,6 @@
     comprobar_sesion();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $opcion = $_POST['opcion'];
-
         if(isset($_POST["opcion"])){
             $opcion = $_POST["opcion"];
             switch($opcion){
@@ -27,6 +25,12 @@
 
             }
         }
+
+        if(isset($_POST['volver'])){
+            header('Location: indexAdmin.php');
+        }
+
+        
         
     }
 
@@ -74,6 +78,14 @@
         <br>
         <input type="submit" value="Eliminar">
     </form>
+
+    <div>
+        <br>
+        <form action="indexAdmin.php" method="post">
+        <b><label for="opcion">Volver a la página de inicio</label></b>
+            <input type="submit" value="Volver">
+        </form>
+    </div>
     
 </body>
 </html>
