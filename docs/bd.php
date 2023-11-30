@@ -148,14 +148,79 @@ function eliminarCategoria($codCat){
 }
 
 //FUNCIONES DE CLIENTE
-function mostrarCategorias(){
+function mostrarListaCategorias(){
     $bd = conectarBD();
-    $sql = "SELECT * FROM categorias";
+    $sql = "SELECT NomCat, CodCat FROM categorias";
 
     $stmt = $bd->prepare($sql);
     $stmt->execute();
 
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC); // uso fetchAll porque espero varias filas
+
+    if (!$res) {
+		return FALSE;
+	}
+	if (count($res) === 0) {
+        return FALSE;
+    }
+	return $res;	
+}
+
+function mostrarInformacionCategoria($codCat){
+    $bd = conectarBD();
+    $sql = "SELECT NomCat, DescripcionCat FROM categorias WHERE CodCat = :codCat";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codCat', $codCat);
+    $stmt->execute();
+
+    $res = $stmt->fetch(PDO::FETCH_ASSOC); //uso fetch porque solo espero una fila
+
+    if (!$res) {
+		return FALSE;
+	}
+	if (count($res) === 0) {
+        return FALSE;
+    }
+    return $res;
+}
+
+function mostrarListaProductos($codCat){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM productos WHERE codCat = :codCat";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codCat', $codCat);
+    $stmt->execute();
+
     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
+
+function mostrarProductos($codigosProductos){
+    $bd = conectarBD();
+    
+    // Crear marcadores de posición según la cantidad de códigos de productos
+    $marcadores = implode(',', array_fill(0, count($codigosProductos), '?'));
+
+    $sql = "SELECT * FROM productos WHERE CodProd IN ($marcadores)";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute($codigosProductos); // Pasa los códigos de productos como un array
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res || count($res) === 0){
+        return false;
+    }
+
     return $res;
 }
 
