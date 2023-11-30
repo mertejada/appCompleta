@@ -25,6 +25,7 @@
             if(comprobarUsuario($idUsuario, $clave)){
                 session_start();
                 $_SESSION['usuario'] = $idUsuario;
+                $_SESSION['carrito'] = [];
                 header('Location: indexCliente.php');
             }else{
                 $err = "Tu nombre de usuario o contraseña no son correctos.";
@@ -50,7 +51,7 @@
         </div>
         <div>
         <label for="password">Clave</label>
-        <input type="clave" name="clave" placeholder="Clave" require>
+        <input type="password" name="clave" placeholder="Clave" require>
         </div>
 
         <div>

@@ -23,6 +23,12 @@
                     $codProd = $_POST["codProd"];
                     eliminarProducto($codProd);
                     break;
+                
+                case "modificar":
+                    $codProd = $_POST["codProd"];
+                    $stock = $_POST["stock"];
+                    modificarStock($codProd, $stock);
+                    break;
 
             }
         }
@@ -73,5 +79,16 @@
         <br>
         <input type="submit" value="Eliminar">
     </form>
+
+    <h3> Modificación de stock</h3>
+    <form action="adminProductos.php" method="POST">
+        <input type="hidden" name="opcion" value="modificar">
+        <label for="codProd">Código de producto:</label>
+        <input type="text" name="codProd" id="codProd">
+        <br>
+        <label for="stock">Stock:</label>
+        <input type="number" name="stock" id="stock">
+        <br>
+        <input type="submit" value="Modificar">
 </body>
 </html>

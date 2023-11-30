@@ -126,6 +126,16 @@ function eliminarProducto($codProd){
     $stmt->execute();
 }
 
+function modificarStock($codProd, $stock){
+    $bd = conectarBD();
+    $sql = "UPDATE productos SET stock = :stock WHERE CodProd = :codProd";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':stock', $stock);
+    $stmt->bindParam(':codProd', $codProd);
+    $stmt->execute();
+}
+
 //FUNCIONES DE GESTION DE CATEGORIAS
 function crearCategoria($nomCat, $descripcionCat){
     $bd = conectarBD();
@@ -208,6 +218,9 @@ function mostrarProductos($codigosProductos){
     $bd = conectarBD();
     
     // Crear marcadores de posición según la cantidad de códigos de productos
+    if(count($codigosProductos) === 0){
+        return false;
+    }
     $marcadores = implode(',', array_fill(0, count($codigosProductos), '?'));
 
     $sql = "SELECT * FROM productos WHERE CodProd IN ($marcadores)";

@@ -5,11 +5,11 @@
     <title>Tabla de productos por categoría</title>
     <style>
         table {
-            width: 100%;
+            width: auto + 10px;
             border-collapse: collapse;
             margin-bottom: 20px;
 			text-align: left;
-        } th, td { border: 1px solid #ddd;}
+        } th, td { border: 1px solid #ddd;padding: 5px;}
     </style>
 </head>
 <body>
@@ -33,6 +33,11 @@
         echo "<h4>".$categoria['DescripcionCat']."</h4>";
 
         $listaProductos = mostrarListaProductos($_GET['categoria']);
+        if($listaProductos === FALSE){
+            echo "Lo sentimos. Aún no existen productos para esta categoría.
+            <a href='cliCategorias.php'>Volver a categorías</a>";
+            exit;
+        }
     ?>
     
     <table>
@@ -65,7 +70,7 @@
                 <td>
                     <form action="cliAnadir.php" method="POST">
                         <input type="hidden" name="codProd" value="<?php echo $codProd; ?>">
-                        <input name='unidades' type='number' min='1' max='<?php echo $stockProd; ?>'>
+                        <input name='unidades' type='number' min='1' value="1" max='<?php echo $stockProd; ?>'>
                         <input name='codCat' type='hidden' value='<?php echo $codCat ?>'>
 						<input type='submit' value='Añadir'>
                     </form>
