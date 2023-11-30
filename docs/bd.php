@@ -157,6 +157,64 @@ function eliminarCategoria($codCat){
     $stmt->execute();
 }
 
+//FUNCIONES DE GESTION DE PEDIDOS
+function mostrarPedidos(){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM pedidos";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
+
+function marcarPedidoEnviado($codPedido){
+    $bd = conectarBD();
+    $sql = "UPDATE pedidos SET Enviado = 1 WHERE CodPedido = :codPedido";
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codPedido', $codPedido);
+    $stmt->execute();
+
+    if(!$stmt){
+        return false;
+    }
+
+    return true;
+}
+
+function eliminarPedido($codPedido){
+    $bd = conectarBD();
+    $bd->beginTransaction();	
+
+    try {
+        $sql = "DELETE FROM pedidosproductos WHERE CodPedido = :codPedido";
+        $stmt = $bd->prepare($sql);
+        $stmt->bindParam(':codPedido', $codPedido);
+        $stmt->execute();
+
+        $sql1 = "DELETE FROM pedidos WHERE CodPedido = :codPedido";
+        $stmt1 = $bd->prepare($sql1);
+        $stmt1->bindParam(':codPedido', $codPedido);
+        $stmt1->execute();
+
+        $bd->commit();
+        return true;
+    } catch (PDOException $e) {
+        $bd->rollback();
+        echo "Error al eliminar el pedido: " . $e->getMessage();
+        return false;
+    }
+}
+
+
 //FUNCIONES DE CLIENTE
 function mostrarListaCategorias(){
     $bd = conectarBD();
@@ -236,5 +294,49 @@ function mostrarProductos($codigosProductos){
 
     return $res;
 }
+
+function realizarPedido($carrito, $idUsuario){
+    $bd = conectarBD();
+    $bd->beginTransaction();	
+    $fechaEnvio = date("Y-m-d H:i:s", time());
+
+    // insertar el pedido
+    $sql = "INSERT INTO pedidos(Enviado, IdUsuario, Fecha) 
+            VALUES(0, :idUsuario, :fechaEnvio)";
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':idUsuario', $idUsuario);
+    $stmt->bindParam(':fechaEnvio', $fechaEnvio);
+    $stmt->execute();
+
+    if (!$stmt) {
+        $bd->rollback();
+        return FALSE;
+    }
+    $pedido = $bd->lastInsertId();
+
+    foreach($carrito as $codProd => $unidades){
+        $sql = "INSERT INTO pedidosproductos(CodProd, CodPedido, Unidades) 
+                VALUES(:codProd, :pedido, :unidades)";
+        $stmt = $bd->prepare($sql);
+        $stmt->bindParam(':codProd', $codProd);
+        $stmt->bindParam(':pedido', $pedido);
+        $stmt->bindParam(':unidades', $unidades);
+        $stmt->execute();
+
+        $sql1 = "UPDATE productos SET stock=stock-$unidades WHERE codProd=:codProd";
+        $stmt1 = $bd->prepare($sql1);
+        $stmt1->bindParam(':codProd', $codProd);
+        $stmt1->execute();
+
+        if (!$stmt || !$stmt1) {
+            $bd->rollback();
+            return FALSE;
+        }
+    }
+    $bd->commit();
+    return $pedido;
+}
+
+
 
 

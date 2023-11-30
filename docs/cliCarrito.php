@@ -4,14 +4,32 @@
     require 'cliCabecera.php';
 	comprobar_sesion();
 
+    
+
+    if (isset($_POST['modificar'])) {
+        $codProd = $_POST['codProd'];
+        $unidades = $_POST['unidades'];
+        $_SESSION['carrito'][$codProd] = $unidades;
+        header ("Location: cliCarrito.php");
+    }
+
+    if(isset($_POST['eliminar'])){
+        $codProd = $_POST['codProd'];
+        unset($_SESSION['carrito'][$codProd]);
+        header ("Location: cliCarrito.php");
+    }
+
     if (isset($_POST['Vaciar'])) {
         unset($_SESSION['carrito']);
         $_SESSION['carrito'] = [];
         header ("Location: cliCarrito.php");
     }
 
-    if (isset($_POST['RealizarPedido'])) {
+    if (isset($_POST['realizarPedido'])) {
+        header ("Location: cliProcesarPedido.php");
     }
+
+    
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,6 +47,9 @@
     </style>	
 	</head>
 	<body>
+        <h2>Tu carrito</h2>
+        <b><i>El envío es gratuito para pedidos superiores a 50€. Si no, el precio de envío será de 5€</i></b><br><hr>
+
 		<?php 
             $codigosProductos = array_keys($_SESSION['carrito']);
             $prodCarrito = mostrarProductos($codigosProductos);
@@ -43,12 +64,15 @@
                     <th>Productos</th>
                     <th>Precio (€)</th>
                     <th>Unidades</th>
+                    <th>Subtotal(Producto)</th>
+                    <th>Eliminar</th>
                 </tr>
 
                 <?php
                 
-                $precioPedido = 0;
+                $subtotalPedido = 0;
                 $pesoPedido = 0;
+                $precioPedido = 5;
 
                 foreach($prodCarrito as $producto){
                     $codProd = $producto['CodProd'];
@@ -57,31 +81,39 @@
                     $pesoProd = $producto['PesoProd'];
                     $codCat = $producto['CodCat'];
                     $unidades = $_SESSION['carrito'][$codProd];
-                    $precioPedido += $precioProd * $unidades;
+                    $subtotalPedido += $precioProd * $unidades;
                     $pesoPedido += $pesoProd * $unidades;
                     ?>
+
                     <tr>
                         <td><?php echo $nomProd; ?></td>
                         <td><?php echo $precioProd."€"; ?></td>
-                        <td><?php echo $unidades; ?></td>
+                        <td><form method= POST action=cliCarrito.php>
+                            <input type="hidden" name="codProd" value="<?php echo $codProd; ?>">
+                            <input type="number" name="unidades" min="1" value="<?php echo $unidades; ?>">
+                            <input type="submit" name="modificar" value="Modificar"></form>
+                        </td>
+                        <td><?php echo $precioProd * $unidades."€"; ?></td>
+                        <td><form method= POST action=cliCarrito.php>
+                            <input type="hidden" name="codProd" value="<?php echo $codProd; ?>">
+                            <input type="submit" name="eliminar" value="Eliminar"></form>
+                        </td>
                     </tr>
-                    <table>
-                    <?php
                     
-                }
-
-                echo "<p>Precio total del pedido: $precioPedido €</p>";
-            
-
-            
-
-            
-        ?>
-		<hr>
+                <?php } 
+                
+                if($subtotalPedido > 50){
+                    $precioPedido = $subtotalPedido;}
+                ?>  
+                
+                <tr><td><b>Subtotal: </b><?php echo $subtotalPedido."€";?> </td></tr>
+                <tr><td><b>Total del pedido: </b><?php echo $precioPedido."€";?> </td></tr>
+                <tr><td><b>Peso del pedido: </b><?php echo $pesoPedido."kg";?> </td></tr>
+                <table><hr>
         
 		<form action="cliCarrito.php" method="POST">
-            <label for="RealizarPedido"></label>
-            <input type="submit" name="RealizarPedido" value="Realizar pedido">
+            <label for="realizarPedido"></label>
+            <input type="submit" name="realizarPedido" value="Realizar pedido">
             <label for="Vaciar"></label>
             <input type="submit" name="Vaciar" value="Vaciar">
         </form>	
