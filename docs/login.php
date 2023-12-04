@@ -4,6 +4,8 @@
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $idUsuario = $_POST['idUsuario'];
         $clave = $_POST['clave'];
+
+        /*
         $iniciarComoAministrador = false;
 
         if(isset($_POST['iniciarComoAministrador'])){
@@ -31,7 +33,24 @@
                 $err = "Tu nombre de usuario o contraseña no son correctos.";
             }
         
+        }*/
+
+        if(comprobarUsuario($idUsuario, $clave)){
+            if(comprobarAdmin($idUsuario, $clave)){
+                session_start();
+                $_SESSION['usuario'] = $idUsuario;
+                header('Location: indexAdmin.php');
+            }else{
+                session_start();
+                $_SESSION['usuario'] = $idUsuario;
+                $_SESSION['carrito'] = [];
+                header('Location: indexCliente.php');
+            }
+        }else{
+            $err = "Tu nombre de usuario o contraseña no son correctos.";
         }
+
+            
     }
 ?>
 
@@ -54,12 +73,15 @@
         <input type="password" name="clave" placeholder="Clave" require>
         </div>
 
-        <div>
+        <!--<div>
         <label for="iniciarComoAministrador">Admin</label>
         <input type="checkbox" name="iniciarComoAministrador" id="iniciarComoAministrador">
-        </div>
+        </div><-->
         <div>
         <input type="submit" value="Ingresar">
+        </div>
+        <div>
+        <!--<input type="submit" name="registro" value="Registrarse"> Si me da tiempo <-->
         </div>
     </form>
 

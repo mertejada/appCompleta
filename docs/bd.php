@@ -31,6 +31,24 @@ function conectarBD(){
 }
 
 //FUNCIONES DE LOGIN:
+
+function mostarUsuarios(){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM usuarios";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
 function comprobarUsuario($idUsuario, $clave){
     $bd = conectarBD();
     $sql = "SELECT * FROM usuarios WHERE IdUsuario = :idUsuario AND Clave = :clave";
@@ -70,6 +88,7 @@ function comprobarAdmin($idUsuario, $clave){
 //FUNCIONES DE GESTION DE USUARIOS
 function crearUsuario($idUsuario, $nombre, $apellido, $clave, $descRol, $correo, $fechaNac){
     $bd = conectarBD();
+    
     if($descRol == "Administrador"){
         $codRol = 1;
     }else{
@@ -78,30 +97,125 @@ function crearUsuario($idUsuario, $nombre, $apellido, $clave, $descRol, $correo,
 
     $sql = "INSERT INTO usuarios VALUES (:idUsuario, :nombre, :apellido, :clave, :codRol, :descRol, :correo, :fechaNac)";
 
-    $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':idUsuario', $idUsuario);
-    $stmt->bindParam(':nombre', $nombre);
-    $stmt->bindParam(':apellido', $apellido);
-    $stmt->bindParam(':clave', $clave);
-    $stmt->bindParam(':codRol', $codRol);
-    $stmt->bindParam(':descRol', $descRol);
-    $stmt->bindParam(':correo', $correo);
-    $stmt->bindParam(':fechaNac', $fechaNac);
-    $stmt->execute();
+    try {
+        $stmt = $bd->prepare($sql);
+        $stmt->bindParam(':idUsuario', $idUsuario);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':apellido', $apellido);
+        $stmt->bindParam(':clave', $clave);
+        $stmt->bindParam(':codRol', $codRol);
+        $stmt->bindParam(':descRol', $descRol);
+        $stmt->bindParam(':correo', $correo);
+        $stmt->bindParam(':fechaNac', $fechaNac);
+        $stmt->execute();
+
+        echo '<span style="color: green;">Usuario creado correctamente.</span>';
+        
+    } catch (PDOException $e) {
+        if ($e->errorInfo[1] == 1062) { // es un codigo de error específico para clave duplicada
+            echo '<span style="color: red;">Error: Ya existe un usuario con ese ID. Por favor, inténtelo de nuevo, </span>';
+        } else {
+            echo '<span style="color: red;">Error: Algo salió mal. Por favor, inténtelo de nuevo.</span>';
+            // Log del error (puedes registrar el error en un archivo de registro, base de datos, etc.)
+            error_log($e->getMessage());
+        }
+    }
 }
 
 function eliminarUsuario($idUsuario){
     $bd = conectarBD();
-    $sql = "DELETE FROM usuarios WHERE IdUsuario = :idUsuario";
+    try {
+        $bd->beginTransaction();
 
-    $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':idUsuario', $idUsuario);
-    $stmt->execute();
+        $stmt = $bd->prepare("DELETE FROM pedidosproductos WHERE CodPedido IN (SELECT CodPedido FROM pedidos WHERE IdUsuario = :idUsuario)");
+        $stmt->bindParam(':idUsuario', $idUsuario);
+        $stmt->execute();
+
+        $stmt = $bd->prepare("DELETE FROM pedidos WHERE IdUsuario = :idUsuario");
+        $stmt->bindParam(':idUsuario', $idUsuario);
+        $stmt->execute();
+
+        $stmt = $bd->prepare("DELETE FROM usuarios WHERE IdUsuario = :idUsuario");
+        $stmt->bindParam(':idUsuario', $idUsuario);
+        $stmt->execute();
+
+        $bd->commit();
+    } catch (PDOException $e) {
+        $bd->rollBack();
+    }
 }
 
+//FUNCIONES DE GESTION DE CATEGORIAS
+function mostrarCategorias(){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM categorias";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
+function crearCategoria($nomCat, $descripcionCat){
+    $bd = conectarBD();
+
+    $sql = "INSERT INTO categorias (nomCat, descripcionCat) VALUES (:nomCat, :descripcionCat)";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':nomCat', $nomCat);
+    $stmt->bindParam(':descripcionCat', $descripcionCat);
+    $stmt->execute();
+
+    
+}
+
+function eliminarCategoria($codCat){
+    $bd = conectarBD();
+
+    try {
+        $bd->beginTransaction();
+
+        $stmt = $bd->prepare("DELETE FROM productos WHERE CodCat = :codCat");
+        $stmt->bindParam(':codCat', $codCat);
+        $stmt->execute();
+
+        $stmt = $bd->prepare("DELETE FROM categorias WHERE CodCat = :codCat"); // TRUNCATE para que el autoincremental del codigo se reinicie
+        $stmt->bindParam(':codCat', $codCat);
+        $stmt->execute();
+
+        $bd->commit();
+    } catch (PDOException $e) {
+        $bd->rollBack();
+        throw $e; // Rethrow the exception after rollback
+    }
+}
 
 //FUNCIONES DE GESTION DE PRODUCTOS
 //No hace falta el codProd porque es autoincremental en la BD
+function mostrarProductosGestion(){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM productos";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
 function crearProducto($nomProd, $descripcionProd, $stock, $precioProd, $pesoProd, $codCat){
     $bd = conectarBD();
     $sql = "INSERT INTO productos (nomProd, descripcionProd, stock, precioProd, pesoProd, codCat) VALUES (:nomProd, :descripcionProd, :stock, :precioProd, :pesoProd, :codCat)";
@@ -119,11 +233,16 @@ function crearProducto($nomProd, $descripcionProd, $stock, $precioProd, $pesoPro
 
 function eliminarProducto($codProd){
     $bd = conectarBD();
-    $sql = "DELETE FROM productos WHERE CodProd = :codProd";
+    try{
+        $sql = "DELETE FROM productos WHERE CodProd = :codProd";
 
-    $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':codProd', $codProd);
-    $stmt->execute();
+        $stmt = $bd->prepare($sql);
+        $stmt->bindParam(':codProd', $codProd);
+        $stmt->execute();
+    }catch(PDOException $e){
+        echo '<span style="color: red;">ERROR: Compruebe que no haya ningún pedido en el que se encuentre este producto.</span>';
+    }
+    
 }
 
 function modificarStock($codProd, $stock){
@@ -133,27 +252,6 @@ function modificarStock($codProd, $stock){
     $stmt = $bd->prepare($sql);
     $stmt->bindParam(':stock', $stock);
     $stmt->bindParam(':codProd', $codProd);
-    $stmt->execute();
-}
-
-//FUNCIONES DE GESTION DE CATEGORIAS
-function crearCategoria($nomCat, $descripcionCat){
-    $bd = conectarBD();
-
-    $sql = "INSERT INTO categorias (nomCat, descripcionCat) VALUES (:nomCat, :descripcionCat)";
-
-    $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':nomCat', $nomCat);
-    $stmt->bindParam(':descripcionCat', $descripcionCat);
-    $stmt->execute();
-}
-
-function eliminarCategoria($codCat){
-    $bd = conectarBD();
-    $sql = "DELETE FROM categorias WHERE CodCat = :codCat";
-
-    $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':codCat', $codCat);
     $stmt->execute();
 }
 
@@ -179,6 +277,21 @@ function mostrarPedidos(){
 function marcarPedidoEnviado($codPedido){
     $bd = conectarBD();
     $sql = "UPDATE pedidos SET Enviado = 1 WHERE CodPedido = :codPedido";
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codPedido', $codPedido);
+    $stmt->execute();
+
+    if(!$stmt){
+        return false;
+    }
+
+    return true;
+}
+
+
+function marcarPedidoRecibido($codPedido){
+    $bd = conectarBD();
+    $sql = "UPDATE pedidos SET Recibido = 1 WHERE CodPedido = :codPedido";
     $stmt = $bd->prepare($sql);
     $stmt->bindParam(':codPedido', $codPedido);
     $stmt->execute();
@@ -335,6 +448,31 @@ function realizarPedido($carrito, $idUsuario){
     }
     $bd->commit();
     return $pedido;
+}
+
+function mostrarPedidosCliente($idUsuario){
+    $bd = conectarBD();
+    try{
+        $sql = "SELECT * FROM pedidos WHERE IdUsuario = :idUsuario";
+
+        $stmt = $bd->prepare($sql);
+        $stmt->bindParam(':idUsuario', $idUsuario);
+        $stmt->execute();
+
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if(!$res){
+            return false;
+        }
+        if(count($res) === 0){
+            return false;
+        }
+        return $res;
+
+    }catch(PDOException $e){
+        echo "Error: " . $e->getMessage();
+    }
+    
 }
 
 

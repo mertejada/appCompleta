@@ -29,6 +29,11 @@
         header ("Location: cliProcesarPedido.php");
     }
 
+    if(isset($_GET['comprarealizada'])){
+        echo "<h2><span style='color: green;'>¡Gracias por su compra!</span></h2>";
+
+    }
+
     
 ?>
 <!DOCTYPE html>
@@ -48,7 +53,8 @@
 	</head>
 	<body>
         <h2>Tu carrito</h2>
-        <b><i>El envío es gratuito para pedidos superiores a 50€. Si no, el precio de envío será de 5€</i></b><br><hr>
+
+        
 
 		<?php 
             $codigosProductos = array_keys($_SESSION['carrito']);
@@ -110,12 +116,14 @@
                 <tr><td><b>Total del pedido: </b><?php echo $precioPedido."€";?> </td></tr>
                 <tr><td><b>Peso del pedido: </b><?php echo $pesoPedido."kg";?> </td></tr>
                 <table><hr>
-        
+                <b><i>El envío es gratuito para pedidos superiores a 50€. Si no, el precio de envío será de 5€</i></b><br><hr>
+
 		<form action="cliCarrito.php" method="POST">
             <label for="realizarPedido"></label>
             <input type="submit" name="realizarPedido" value="Realizar pedido">
             <label for="Vaciar"></label>
             <input type="submit" name="Vaciar" value="Vaciar">
         </form>	
+
 	</body>
 </html>

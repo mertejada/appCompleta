@@ -59,7 +59,7 @@
 			$pesoProd = $producto['PesoProd'];
 			$codCat = $producto['CodCat'];
 
-			
+            if($stockProd >= 1){
 			?>
             <tr>
                 <td><?php echo $nomProd; ?></td>
@@ -76,7 +76,7 @@
                     </form>
                 </td>
             </tr>
-        <?php } ?>
+        <?php } } ?>
     </table>
 </body>
 </html>

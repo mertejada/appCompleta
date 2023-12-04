@@ -74,7 +74,7 @@
 
         ?>
 
-        <h2>¡Pedido realizado!</h2>
+        
         <h3>Resumen de la compra</h3>
         <table>
             <tr>
@@ -90,7 +90,8 @@
 		}
 
         $_SESSION['carrito'] = [];
-        header('Location: indexCliente.php');
+        header('Location: cliCarrito.php?comprarealizada=true');
+        echo '<h3><span style="color: green;">¡Gracias por su compra!</span></h3>';
         ?>
 
         <tr>

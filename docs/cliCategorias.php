@@ -17,7 +17,7 @@
     <?php
 		$categorias = mostrarListaCategorias();
 		if($categorias===false){
-			echo "<p class='error'>ERROR: Se ha producido un error al mostrar las categorías</p>";
+			echo "<p class='error'>ERROR: No existen categorías para mostrar.</p>";
 		}else{
 			echo "<ul>";
 			foreach($categorias as $cat){		

@@ -1,5 +1,5 @@
 <?php
-    require "adminCabecera.php";
+    require "cliCabecera.php";
     require "sesion.php";
     require_once "bd.php";
     comprobar_sesion();
@@ -12,8 +12,7 @@
             marcarPedidoEnviado($codPedido);
         }else if($accion == "eliminar"){
             eliminarPedido($codPedido);
-        }else if($accion == "marcarRecibido"){
-            marcarPedidoRecibido($codPedido);
+
         }
     }
 ?>
@@ -34,25 +33,26 @@
     </style>
 </head>
 <body>
-    <h2> Gestión de pedidos </h2>
+    <h2> Tus pedidos </h2>
     <table>
         <tr>
             <th>IdPedido</th>
             <th>IdUsuario</th>
             <th>Fecha</th>
-            <th>Enviado</th>
-            <th>Recibido</th>
-            <th>Acciones</th>
+            <th>Estado del pedido</th>
         </tr>
         <?php
-            $pedidos = mostrarPedidos();
+            $pedidos = mostrarPedidosCliente($_SESSION['usuario']);
+            if($pedidos === FALSE){
+                echo "<p>No hay ningún pedido para gestionar</p>";
+                exit;
+            }
+
 
             if($pedidos === FALSE){
-                echo "<p>No hay ningún pedido para gestionar.</p>";
+                echo "<p>No hay ningún pedido para gestionar</p>";
                 exit;
-            }else{
-
-            
+            }
             
             foreach($pedidos as $pedido){ 
                 $codPedido = $pedido['CodPedido'];
@@ -61,16 +61,15 @@
                 $enviado = $pedido['Enviado'];
                 $recibido = $pedido['Recibido'];
 
-                if($enviado == 0){
-                    $enviado = "No";
-                }else{
-                    $enviado = "Si";
-                }
+                $estado = "";
 
-                if($recibido == 0){
-                    $recibido = "No";
+                if($enviado == 1){
+                    $estado = "Enviado";
+                    if($recibido == 1){
+                        $estado = "Recibido";
+                    }
                 }else{
-                    $recibido = "Si";
+                    $estado = "Pendiente de envío";
                 }
 
                 
@@ -80,22 +79,11 @@
                     <td><?= $codPedido ?></td>
                     <td><?= $idUsuario ?></td>
                     <td><?= $fecha ?></td>
-                    <td><?= $enviado ?></td>
-                    <td><?= $recibido ?></td>
-                    <td><form action="adminPedidos.php" method="post">
-                        <select name="accion">
-                            <option value="marcarEnviado">Pedido enviado</option>
-                            <option value="marcarRecibido">Pedido recibido por cliente</option>
-                            <option value="eliminar">Eliminar pedido</option>
-                        </select>
-                        <input type="hidden" name="codPedido" value="<?= $codPedido ?>">
-                        <input type="submit" value="Confirmar">
-                    </form>
-                    </td>
+                    <td><?= $estado ?></td>
                 </tr>
 
 
-        <?php } }?>
+        <?php } ?>
     
 </body>
 </html>

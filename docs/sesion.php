@@ -5,3 +5,5 @@ function comprobar_sesion(){
 		header("Location: login.php?redirigido=true");
 	}		
 }
+
+//debo controlar que el usuario sea administrador? o solo que este logueado? 
