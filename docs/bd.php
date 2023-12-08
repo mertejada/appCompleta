@@ -1,4 +1,5 @@
 <?php 
+
 //FUNCIONES DE CONEXION CON LA BASE DE DATOS 
 function leer_config($nombre, $esquema){
 	$config = new DOMDocument();
@@ -30,9 +31,9 @@ function conectarBD(){
     }
 }
 
-//FUNCIONES DE LOGIN:
+//FUNCIONES DE USUARIOS:
 
-function mostarUsuarios(){
+function mostrarUsuarios(){
     $bd = conectarBD();
     $sql = "SELECT * FROM usuarios";
 
@@ -49,30 +50,29 @@ function mostarUsuarios(){
     }
     return $res;
 }
-function comprobarUsuario($idUsuario, $clave){
+function comprobarUsuario($idUsuario, $clave) {
     $bd = conectarBD();
-    $sql = "SELECT * FROM usuarios WHERE IdUsuario = :idUsuario AND Clave = :clave";
+    $sql = "SELECT Clave FROM usuarios WHERE IdUsuario = :idUsuario";
 
     $stmt = $bd->prepare($sql);
-    $stmt->bindParam(':idUsuario', $idUsuario); //bindParam vincula el parametro con la variable
-    $stmt->bindParam(':clave', $clave);
+    $stmt->bindParam(':idUsuario', $idUsuario);
     $stmt->execute();
 
-    $res = $stmt->fetchAll(PDO::FETCH_ASSOC); //fetchAll devuelve un array con todas las filas coincidentes
-    if(count($res) == 1){
+    $hashedPassword = $stmt->fetchColumn();
+
+    if ($hashedPassword && password_verify($clave, $hashedPassword)) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
 
-function comprobarAdmin($idUsuario, $clave){
+function comprobarAdmin($idUsuario){
     $bd = conectarBD();
-    $sql = "SELECT * FROM usuarios WHERE IdUsuario = :idUsuario AND Clave = :clave AND CodRol = 1";
+    $sql = "SELECT * FROM usuarios WHERE IdUsuario = :idUsuario AND CodRol = 1";
 
     $stmt = $bd->prepare($sql);
     $stmt->bindParam(':idUsuario', $idUsuario);
-    $stmt->bindParam(':clave', $clave);
     $stmt->execute();
 
     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -89,33 +89,36 @@ function comprobarAdmin($idUsuario, $clave){
 function crearUsuario($idUsuario, $nombre, $apellido, $clave, $descRol, $correo, $fechaNac){
     $bd = conectarBD();
     
-    if($descRol == "Administrador"){
+    if($descRol == "Admin"){
         $codRol = 1;
     }else{
         $codRol = 0;
     }
 
-    $sql = "INSERT INTO usuarios VALUES (:idUsuario, :nombre, :apellido, :clave, :codRol, :descRol, :correo, :fechaNac)";
-
+    $claveEncriptada = password_hash($clave, PASSWORD_BCRYPT, ['cost' => 4]);
+    $sql = "INSERT INTO usuarios 
+            VALUES (:idUsuario, :nombre, :apellido, :clave, :codRol, :descRol, :correo, :fechaNac)";
+    
     try {
         $stmt = $bd->prepare($sql);
         $stmt->bindParam(':idUsuario', $idUsuario);
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':apellido', $apellido);
-        $stmt->bindParam(':clave', $clave);
+        $stmt->bindParam(':clave', $claveEncriptada);
         $stmt->bindParam(':codRol', $codRol);
         $stmt->bindParam(':descRol', $descRol);
         $stmt->bindParam(':correo', $correo);
         $stmt->bindParam(':fechaNac', $fechaNac);
         $stmt->execute();
 
-        echo '<span style="color: green;">Usuario creado correctamente.</span>';
+        //devuelve true si se ha creado correctamente
+        return true;
         
     } catch (PDOException $e) {
         if ($e->errorInfo[1] == 1062) { // es un codigo de error específico para clave duplicada
-            echo '<span style="color: red;">Error: Ya existe un usuario con ese ID. Por favor, inténtelo de nuevo, </span>';
+            echo '<span style="color: red;">Ya existe ese nombre de usuario. Por favor, inténtelo de nuevo, </span>';
         } else {
-            echo '<span style="color: red;">Error: Algo salió mal. Por favor, inténtelo de nuevo.</span>';
+            echo '<span style="color: red;">Algo salió mal. Por favor, inténtelo de nuevo.</span>';
             // Log del error (puedes registrar el error en un archivo de registro, base de datos, etc.)
             error_log($e->getMessage());
         }
@@ -193,7 +196,7 @@ function eliminarCategoria($codCat){
         $bd->commit();
     } catch (PDOException $e) {
         $bd->rollBack();
-        throw $e; // Rethrow the exception after rollback
+        echo '<span style="color: red;">ERROR: Compruebe que no haya ningún pedido en el que se encuentre este producto.</span>';
     }
 }
 
@@ -240,7 +243,11 @@ function eliminarProducto($codProd){
         $stmt->bindParam(':codProd', $codProd);
         $stmt->execute();
     }catch(PDOException $e){
-        echo '<span style="color: red;">ERROR: Compruebe que no haya ningún pedido en el que se encuentre este producto.</span>';
+        if($e->errorInfo[1] == 1451){
+            echo '<span style="color: red;">ERROR: Compruebe que no haya ningún pedido en el que se encuentre este producto.</span>';
+        }else{
+            echo '<span style="color: red;">Algo salió mal. Por favor, inténtelo de nuevo.</span>';
+        }
     }
     
 }
@@ -408,6 +415,20 @@ function mostrarProductos($codigosProductos){
     return $res;
 }
 
+function obtenerStock($codProd){
+    $bd = conectarBD();
+    $sql = "SELECT stock FROM productos WHERE CodProd = :codProd";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codProd', $codProd);
+    $stmt->execute();
+
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $res['stock'];
+}
+
+
 function realizarPedido($carrito, $idUsuario){
     $bd = conectarBD();
     $bd->beginTransaction();	
@@ -473,6 +494,45 @@ function mostrarPedidosCliente($idUsuario){
         echo "Error: " . $e->getMessage();
     }
     
+}
+
+function listaProductosPedido($codPedido){
+    $bd = conectarBD();
+    $sql = "SELECT * FROM pedidosproductos WHERE CodPedido = :codPedido";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codPedido', $codPedido);
+    $stmt->execute();
+
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res;
+}
+
+function nombreProducto($codPedido){
+    $bd = conectarBD();
+    $sql = "SELECT NomProd FROM productos WHERE CodProd = :codPedido";
+
+    $stmt = $bd->prepare($sql);
+    $stmt->bindParam(':codPedido', $codPedido);
+    $stmt->execute();
+
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$res){
+        return false;
+    }
+    if(count($res) === 0){
+        return false;
+    }
+    return $res['NomProd'];
+
 }
 
 

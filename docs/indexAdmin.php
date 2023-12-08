@@ -6,26 +6,6 @@
     comprobar_sesion();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        if(isset($_POST["opcion"])){
-            $opcion = $_POST["opcion"];
-            switch($opcion){
-                case 1:
-                    header('Location: adminUsuarios.php');
-                    break;
-                case 2:
-                    header('Location: adminProductos.php');
-                    break;
-                case 3:
-                    header('Location: adminCategorias.php');
-                    break;
-                case 4:
-                    header('Location: adminDescuentos.php');
-                    break;
-            }
-        }
-
-        
-
         if(isset($_POST['cerrarSesion'])){
             session_destroy();
             header('Location: login.php');
@@ -41,19 +21,15 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Bienvenido, administrador</h1>
+    <h1>Bienvenido, administrador.</h1>
     <h2> ¿Qué desea gestionar?</h2>
+    <ul>
+        <li><a href="adminUsuarios.php">Usuarios</a></li>
+        <li><a href="adminCategorias.php">Categorías</a></li>
+        <li><a href="adminProductos.php">Productos</a></li>
+        <li><a href="adminPedidos.php">Pedidos</a></li>
+    </ul>
     <form action="indexAdmin.php" method="post">
-        <div>
-            <select name="opcion">
-                <option value="1">Usuarios</option>
-                <option value="2">Productos</option>
-                <option value="3">Categorías</option>
-                <option value="4">Descuentos</option>
-            </select>
-            <input type="submit" value="Enviar">
-        </div>
-        <div>
         <input type="submit" name="cerrarSesion" value="Cerrar sesión">
     </form> 
 </body>

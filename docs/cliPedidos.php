@@ -4,17 +4,6 @@
     require_once "bd.php";
     comprobar_sesion();
 
-    if(isset($_POST['accion'])){
-        $accion = $_POST['accion'];
-        $codPedido = $_POST['codPedido'];
-
-        if($accion == "marcarEnviado"){
-            marcarPedidoEnviado($codPedido);
-        }else if($accion == "eliminar"){
-            eliminarPedido($codPedido);
-
-        }
-    }
 ?>
 
 <!DOCTYPE html>
@@ -38,19 +27,20 @@
         <tr>
             <th>IdPedido</th>
             <th>IdUsuario</th>
+            <th>Productos</th>
             <th>Fecha</th>
             <th>Estado del pedido</th>
         </tr>
         <?php
             $pedidos = mostrarPedidosCliente($_SESSION['usuario']);
             if($pedidos === FALSE){
-                echo "<p>No hay ningún pedido para gestionar</p>";
+                echo "<p>No hay ningún pedido para mostrar.</p>";
                 exit;
             }
 
 
             if($pedidos === FALSE){
-                echo "<p>No hay ningún pedido para gestionar</p>";
+                echo "<p>No hay ningún pedido para gestionar.</p>";
                 exit;
             }
             
@@ -60,6 +50,8 @@
                 $fecha = $pedido['Fecha'];
                 $enviado = $pedido['Enviado'];
                 $recibido = $pedido['Recibido'];
+
+                $listaProductos = listaProductosPedido($codPedido);
 
                 $estado = "";
 
@@ -78,6 +70,18 @@
                 <tr>
                     <td><?= $codPedido ?></td>
                     <td><?= $idUsuario ?></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <th>Unidades</th>
+                            </tr>
+                            <?php foreach($listaProductos as $producto){ ?>
+                                <tr>
+                                    <td><?= nombreProducto($producto['CodProd'])?></td>
+                                    <td><?= $producto['Unidades'] ?></td>
+                                </tr>
+                            <?php } ?>
+                        </table>
                     <td><?= $fecha ?></td>
                     <td><?= $estado ?></td>
                 </tr>

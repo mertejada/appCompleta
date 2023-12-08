@@ -32,8 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Retrieve the list of products
-$productos = mostrarProductosGestion();
+$productos = mostrarProductosGestion(); // puedo bor
 ?>
 
 <!DOCTYPE html>
@@ -66,19 +65,19 @@ $productos = mostrarProductosGestion();
     <form action="adminProductos.php" method="POST">
         <input type="hidden" name="opcion" value="crear">
         <label for="nomProd">Nombre del producto:</label>
-        <input type="text" name="nomProd" id="nomProd">
+        <input type="text" name="nomProd" id="nomProd" required>
         <br>
         <label for="descripcionProd">Descripción del producto:</label>
-        <input type="text" name="descripcionProd" id="descripcionProd">
+        <input type="text" name="descripcionProd" id="descripcionProd" required>
         <br>
         <label for="stock">Stock:</label>
-        <input type="number" name="stock" id="stock" min= 0>
+        <input type="number" name="stock" id="stock" min= 0 required> 
         <br>
         <label for="precioProd">Precio del producto:</label>
-        <input type="number" step="0.01" name="precioProd" id="precioProd">
+        <input type="number" step="0.01" name="precioProd" id="precioProd" required>
         <br>
         <label for="pesoProd">Peso del producto (kg):</label>
-        <input type="number" step="0.01" name="pesoProd" id="pesoProd">
+        <input type="number" step="0.01" name="pesoProd" id="pesoProd" required>
         <br>
         <label for="codCat">Categoría:</label>
         <select name="codCat" id="codCat">
@@ -99,29 +98,29 @@ $productos = mostrarProductosGestion();
             <tr>
                 <th>Código</th>
                 <th>Nombre</th>
+                <th>Código de categoría</th>
                 <th>Descripción</th>
                 <th>Stock</th>
                 <th>Precio</th>
                 <th>Peso (kg)</th>
-                <th>Código de categoría</th>
                 <th>Eliminar producto</th>
             </tr>
             <?php foreach ($productos as $prod) { ?>
                 <tr>
                     <td><?= $prod['CodProd'] ?></td>
                     <td><?= $prod['NomProd'] ?></td>
+                    <td><?= $prod['CodCat'] ?></td>
                     <td><?= $prod['DescripcionProd'] ?></td>
                     <td>
                         <form action="adminProductos.php" method="POST">
                             <input type="hidden" name="opcion" value="modificar">
                             <input type="hidden" name="codProd" value="<?= $prod['CodProd'] ?>">
-                            <input type="number" name="stock" value="<?= $prod['Stock'] ?>">
+                            <input type="number" name="stock" value="<?= $prod['Stock'] ?>" min=0>
                             <input type="submit" value="Actualizar">
                         </form>
                     </td>
                     <td><?= $prod['PrecioProd'] ?></td>
                     <td><?= $prod['PesoProd'] ?></td>
-                    <td><?= $prod['CodCat'] ?></td>
                     <td>
                         <form action="adminProductos.php" method="POST" onsubmit="return confirm('¿Estás seguro de querer eliminar este producto?');">
                             <input type="hidden" name="opcion" value="eliminar">

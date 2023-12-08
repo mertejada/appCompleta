@@ -27,7 +27,7 @@
         }
     }
 
-    $usuarios = mostarUsuarios(); // Función ficticia para obtener la lista de usuarios
+    $usuarios = mostrarUsuarios(); // Función ficticia para obtener la lista de usuarios
 
 ?>
 
@@ -57,23 +57,23 @@
     <form action="adminUsuarios.php" method="POST">
         <input type="hidden" name="opcion" value="crear">
         <label for="idUsuario">ID Usuario:</label>
-        <input type="text" name="idUsuario" id="idUsuario">
+        <input type="text" name="idUsuario" id="idUsuario" required><br>
         <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" id="nombre">
+        <input type="text" name="nombre" id="nombre" required><br>
         <label for="apellidos">Apellidos:</label>
-        <input type="text" name="apellidos" id="apellidos">
+        <input type="text" name="apellidos" id="apellidos" required><br>
         <label for="clave">Clave:</label>
-        <input type="password" name="clave" id="clave">
+        <input type="password" name="clave" id="clave" required><br>
         <label for="descRol">Descripción de rol:</label>
         <select name="descRol" id="descRol">
-            <option value="Administrador">Administrador</option>
+            <option value="Admin">Administrador</option>
             <option value="Cliente">Cliente</option>
-        </select>
+        </select><br>
         <label for="correo">Correo:</label>
-        <input type="text" name="correo" id="correo">
+        <input type="text" name="correo" id="correo" required><br>
         <label for="fechaNac">Fecha de nacimiento:</label>
-        <input type="date" name="fechaNac" id="fechaNac">
-        <input type="submit" value="Crear usuario">
+        <input type="date" name="fechaNac" id="fechaNac" value="1950-01-01" required><br>
+        <input type="submit" value="Crear usuario"><br>
     </form>
 
     <!-- Tabla con la información de usuarios y botones para eliminar -->
@@ -83,7 +83,6 @@
             <th>ID Usuario</th>
             <th>Nombre</th>
             <th>Apellidos</th>
-            <th>Clave</th>
             <th>Descripción de Rol</th>
             <th>Correo</th>
             <th>Fecha de Nacimiento</th>
@@ -94,13 +93,12 @@
                 <td><?= $usuario['IdUsuario'] ?></td>
                 <td><?= $usuario['NombreUsuario'] ?></td>
                 <td><?= $usuario['ApellidoUsuario'] ?></td>
-                <td><?= $usuario['Clave'] ?></td>
                 <td><?= $usuario['DescripcionRol'] ?></td>
                 <td><?= $usuario['Correo'] ?></td>
                 <td><?= $usuario['FechaNac'] ?></td>
-                <?php if (($usuario['DescripcionRol'] == "Administrador" && $usuario['IdUsuario'] != $_SESSION['usuario'])) { ?>
+                <?php if ($usuario['CodRol'] != 1) { ?>
                 <td>
-                    <form action="adminUsuarios.php" method="POST" onsubmit="return confirm('¿Estás seguro de querer eliminar este usuario? Se eliminarán todo sus pedidos.');">
+                    <form action="adminUsuarios.php" method="POST" onsubmit="return confirm('¿Estás seguro de querer eliminar este usuario? Se eliminarán todos sus pedidos.');">
                         <input type="hidden" name="opcion" value="eliminar">
                         <input type="hidden" name="idUsuario" value="<?= $usuario['IdUsuario'] ?>">
                         <input type="submit" value="Eliminar usuario">

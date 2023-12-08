@@ -7,17 +7,13 @@ comprobar_sesion();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST["opcion"])) {
         $opcion = $_POST['opcion'];
-        switch ($opcion) {
-            case "crear":
-                $nomCat = $_POST["nomCat"];
-                $descripcionCat = $_POST["descripcionCat"];
-                crearCategoria($nomCat, $descripcionCat);
-                break;
-
-            case "eliminar":
-                $codCat = $_POST["codCat"];
-                eliminarCategoria($codCat);
-                break;
+        if($opcion == "crear"){
+            $nomCat = $_POST["nomCat"];
+            $descripcionCat = $_POST["descripcionCat"];
+            crearCategoria($nomCat, $descripcionCat);
+        }else if($opcion == "eliminar"){
+            $codCat = $_POST["codCat"];
+            eliminarCategoria($codCat);
         }
     }
 }
@@ -52,10 +48,10 @@ if ($categorias === false) {
     <form action="adminCategorias.php" method="POST">
         <input type="hidden" name="opcion" value="crear">
         <label for="nomCat">Nombre de la categoría:</label>
-        <input type="text" name="nomCat" id="nomCat">
+        <input type="text" name="nomCat" id="nomCat" required>
         <br>
         <label for="descripcionCat">Descripción de la categoría:</label>
-        <input type="text" name="descripcionCat" id="descripcionCat">
+        <input type="text" name="descripcionCat" id="descripcionCat" required>
         <br>
         <input type="submit" value="Crear">
     </form>

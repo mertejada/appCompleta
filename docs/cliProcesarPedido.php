@@ -10,14 +10,11 @@
             $idUsuario = $_POST['idUsuario'];
             $clave = $_POST['clave'];
 
-            if(comprobarUsuario($idUsuario, $clave)){
-                if($_SESSION['usuario'] == $idUsuario){
-                    $mensaje= "Puede continuar con su pedido";
-                    $confirmacion = true;
-            }else{
-                $mensaje = "Sus credenciales no son correctas <a href='cliCarrito.php'>Volver al carrito</a>";
-            
-            }
+        if($_SESSION['usuario'] == $idUsuario && comprobarUsuario($idUsuario, $clave)){
+            $confirmacion = true;
+            $mensaje = "Puede continuar con su pedido";
+        }else{
+            $mensaje = "<b>Lo sentimos,sus credenciales no son correctas.</b> <a href='cliCarrito.php'>Volver al carrito</a>";
         }
     }
     }
@@ -70,36 +67,16 @@
 
         $resul = realizarPedido($_SESSION['carrito'], $_SESSION['usuario']);
 		$compra=$_SESSION['carrito'];
-        $productos = mostrarProductos(array_keys($_SESSION['carrito']));
-
-        ?>
-
         
-        <h3>Resumen de la compra</h3>
-        <table>
-            <tr>
-                <th>Producto</th>
-                <th>Unidades</th>
-            </tr>
-
-        <?php
-		foreach ($productos as $producto) {
-			$cod=$producto['CodProd'];
-			$nom=$producto['NomProd'];	
-			$unidades=$_SESSION['carrito'][$cod];
-		}
+        foreach($compra as $producto){
+            $stock = $producto['stock'];
+            $stock = $stock - $producto['cantidad'];
+            modificarStock($producto['codProd'], $stock);
+        }
 
         $_SESSION['carrito'] = [];
         header('Location: cliCarrito.php?comprarealizada=true');
         echo '<h3><span style="color: green;">¡Gracias por su compra!</span></h3>';
-        ?>
-
-        <tr>
-            <td><?= $nom ?></td>
-            <td><?= $unidades ?></td>
-        </tr>
-        <table>
-
-        <?php } ?>
+        } ?>
 </body>
 </html>

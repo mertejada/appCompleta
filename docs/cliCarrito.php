@@ -19,7 +19,7 @@
         header ("Location: cliCarrito.php");
     }
 
-    if (isset($_POST['Vaciar'])) {
+    if (isset($_POST['vaciar'])) {
         unset($_SESSION['carrito']);
         $_SESSION['carrito'] = [];
         header ("Location: cliCarrito.php");
@@ -30,9 +30,14 @@
     }
 
     if(isset($_GET['comprarealizada'])){
-        echo "<h2><span style='color: green;'>¡Gracias por su compra!</span></h2>";
+        if($_GET['comprarealizada'] == true){
+            echo "<h2><span style='color: green;'>¡Gracias por su compra!</span></h2>";
+        }else{
+            echo "<h2><span style='color: red;'>No se ha podido realizar la compra.</span></h2>";
+        }
 
     }
+
 
     
 ?>
@@ -96,7 +101,7 @@
                         <td><?php echo $precioProd."€"; ?></td>
                         <td><form method= POST action=cliCarrito.php>
                             <input type="hidden" name="codProd" value="<?php echo $codProd; ?>">
-                            <input type="number" name="unidades" min="1" value="<?php echo $unidades; ?>">
+                            <input type="number" name="unidades" min="1" value="<?php echo $unidades; ?>" max="<?php echo $producto['Stock']; ?>">
                             <input type="submit" name="modificar" value="Modificar"></form>
                         </td>
                         <td><?php echo $precioProd * $unidades."€"; ?></td>
@@ -122,7 +127,7 @@
             <label for="realizarPedido"></label>
             <input type="submit" name="realizarPedido" value="Realizar pedido">
             <label for="Vaciar"></label>
-            <input type="submit" name="Vaciar" value="Vaciar">
+            <input type="submit" name="vaciar" value="Vaciar">
         </form>	
 
 	</body>

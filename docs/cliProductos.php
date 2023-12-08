@@ -1,3 +1,13 @@
+
+<?php
+    /*comprueba que el usuario haya abierto sesión o redirige*/
+    require 'sesion.php';
+    require_once 'bd.php';
+    require 'cliCabecera.php';
+    comprobar_sesion();
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,12 +24,6 @@
 </head>
 <body>
     <?php
-        /*comprueba que el usuario haya abierto sesión o redirige*/
-        require 'sesion.php';
-        require_once 'bd.php';
-        require 'cliCabecera.php';
-        comprobar_sesion();
-
         $categoria = mostrarInformacionCategoria($_GET['categoria']);
         $codCat = $_GET['categoria'];
 
@@ -70,7 +74,7 @@
                 <td>
                     <form action="cliAnadir.php" method="POST">
                         <input type="hidden" name="codProd" value="<?php echo $codProd; ?>">
-                        <input name='unidades' type='number' min='1' value="1" max='<?php echo $stockProd; ?>'>
+                        <input name='unidades' type='number' min='1' max='<?php echo $stockProd; ?>' value=1>
                         <input name='codCat' type='hidden' value='<?php echo $codCat ?>'>
 						<input type='submit' value='Añadir'>
                     </form>
