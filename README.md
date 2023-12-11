@@ -7,7 +7,7 @@ Los administradores pueden iniciar sesión para gestionar los usuarios, categor�
 
 Los clientes pueden iniciar sesión o registrarse para ver las categorías/productos y realizar/visualizar pedidos.
 
-- Para iniciar sesión como administrador:
--Nombre de usuario: admin
--Clave: admin
+## Para iniciar sesión como administrador:
+- Nombre de usuario: admin
+- Clave: admin
 
