@@ -5,15 +5,15 @@ require_once "bd.php";
 comprobar_sesion();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST["opcion"])) {
+    if (isset($_POST["opcion"])) { // Si se ha pulsado el botón de crear o eliminar
         $opcion = $_POST['opcion'];
         if($opcion == "crear"){
             $nomCat = $_POST["nomCat"];
             $descripcionCat = $_POST["descripcionCat"];
-            crearCategoria($nomCat, $descripcionCat);
+            crearCategoria($nomCat, $descripcionCat); // Crear categoría
         }else if($opcion == "eliminar"){
             $codCat = $_POST["codCat"];
-            eliminarCategoria($codCat);
+            eliminarCategoria($codCat); // Eliminar categoría
         }
     }
 }
@@ -57,7 +57,7 @@ if ($categorias === false) {
     </form>
 
     <h4>Categorías</h4>
-    <?php if ($categorias !== false) { ?>
+    <?php if ($categorias !== false) {  // Si hay categorías ?>
         <table>
             <tr>
                 <th>Código</th>
@@ -65,7 +65,7 @@ if ($categorias === false) {
                 <th>Descripción</th>
                 <th>Eliminar</th>
             </tr>
-            <?php foreach ($categorias as $cat) { ?>
+            <?php foreach ($categorias as $cat) { // Muestra cada categoría de la lista ?>
                 <tr>
                     <td><?= $cat['CodCat'] ?></td>
                     <td><?= $cat['NomCat'] ?></td>

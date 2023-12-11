@@ -5,7 +5,7 @@ require_once "bd.php";
 comprobar_sesion();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST["opcion"])) {
+    if (isset($_POST["opcion"])) { 
         $opcion = $_POST["opcion"];
         switch ($opcion) {
             case "crear":

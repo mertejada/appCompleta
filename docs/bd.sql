@@ -1,10 +1,23 @@
--- NO SÉ SI ES CORRECTO, ES LA EXPORTACIÓN DE LA BD QUE HE HECHO EN PHPMYADMIN
+-- Este archivo (exportado desde phpMyAdmin) contiene la base de datos de la tienda online Nebula.
 
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: localhost
+-- Tiempo de generación: 11-12-2023 a las 16:05:44
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Base de datos: `Nebula`
@@ -80,11 +93,12 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`CodProd`, `NomProd`, `DescripcionProd`, `Stock`, `PrecioProd`, `PesoProd`, `CodCat`) VALUES
-(1, 'HP Victus 15L TG02-0049ns', 'PC Intel® Core™ i5-12400F, 16GB RAM, 512GB Plata', 3, 1149.90, 2.00, 1),
-(2, 'Portátil LG 16ZB90R-G.AA75B', '16\" WQXGA, Intel® Evo™ Core™ i7-1360P, 16GB RAM, 512 GB SSD, Windows 11 Home, Negro', 0, 1119.50, 1.00, 1),
-(3, 'iPhone 15', '128GB | White', 5, 992.00, 0.40, 2),
-(4, 'Samsung Galaxy Tab A8', '128 GB eMMC, Gris Oscuro', 5, 219.00, 0.70, 3),
-(5, 'Sony WH-1000XM4B', 'Cancelación ruido (Noise Cancelling), 30h', 5, 199.00, 0.30, 4);
+(1, 'HP Victus 15L TG02-0049ns', 'PC Intel® Core™ i5-12400F, 16GB RAM, 512GB Plata', 10, 1149.90, 2.00, 1),
+(2, 'Portátil LG 16ZB90R-G.AA75B', '16\" WQXGA, Intel® Evo™ Core™ i7-1360P, 16GB RAM, 512 GB SSD, Windows 11 Home, Negro', 10, 1119.50, 1.00, 1),
+(3, 'iPhone 15', '128GB | White', 10, 992.00, 0.40, 2),
+(4, 'Samsung Galaxy Tab A8', '128 GB eMMC, Gris Oscuro', 10, 219.00, 0.70, 3),
+(5, 'Sony WH-1000XM4B', 'Cancelación ruido (Noise Cancelling), 30h', 10, 199.00, 0.30, 4),
+(6, 'Sony WH-CH520', 'Bluetooth, 50 horas de autonomía, Carga rápida, 360 Audio', 10, 39.99, 0.20, 4);
 
 -- --------------------------------------------------------
 
@@ -108,7 +122,6 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `NombreUsuario`, `ApellidoUsuario`, `Clave`, `CodRol`, `DescripcionRol`, `Correo`, `FechaNac`) VALUES
-('a', 'a', 'a', '$2y$04$M.k4GpmqQ59haqPuJjUqT.TFwogub3Et7Dt2SymnxXhtb0M0FhH.q', 0, 'Cliente', 'mer@gmail.com', '1950-01-01'),
 ('admin', 'Mercedes', 'Tejada', '$2y$04$d/gTpOWxgFIUqJ60SVS3OeHsw6z4vR5RpHykwEa8Q4RXTTN5SCRXK', 1, 'Admin', 'mercedestejadaporcel@gmail.com', '2002-08-07');
 
 --
@@ -175,7 +188,7 @@ ALTER TABLE `pedidosproductos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `CodProd` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `CodProd` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
