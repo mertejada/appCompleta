@@ -22,12 +22,17 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `Nebula`
 --
+CREATE DATABASE IF NOT EXISTS Nebula;
+USE Nebula;
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `categorias`
 --
+
+
+
 
 CREATE TABLE `categorias` (
   `CodCat` int(11) NOT NULL,
